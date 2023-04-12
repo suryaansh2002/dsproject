@@ -1,5 +1,7 @@
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Graph } from 'react-d3-graph';
+
 function App() {
   const [bits, setBits] = useState(0)
   const [numNodes, setNumNodes] = useState(0)
@@ -9,7 +11,66 @@ function App() {
   const [key, setKey] = useState()
   const [init, setInit] = useState()
   const [resultArr, setResultArr] = useState([])
-  
+  const [graph, setGraph] = useState({})
+
+  useEffect((effect) => {
+    console.log(graph)
+  }, [graph])
+
+  const Myconfig = {
+    node: {
+      color: 'white',
+      size: 200,
+      fontSize: 16,
+      labelProperty: 'label',
+      fontColor : "white"
+    },
+    link: {
+      color: 'white',
+      strokeWidth: 2,
+    },
+    height: 500,
+    width: 800,
+    d3: {
+      alphaTarget: 0.05,
+      gravity: -100,
+    },
+    layout: {
+      type: 'd3Force',
+      alphaTarget: 0.05,
+      gravity: -100,
+    },
+  }
+
+  const simulationConfig = {
+    alpha: 0.5,
+    alphaMin: 0.01,
+    alphaDecay: 0.05,
+    velocityDecay: 0.3,
+    force: {
+      name: 'circle',
+      radius: 200,
+      strength: 1,
+      x: 400,
+      y: 250,
+    },
+  };
+
+  const createGraph = async () => {
+    var x = {}
+    x['nodes'] = []
+    x['links'] = []
+    for (var i = 0; i < Math.pow(2, bits); i++) {
+      var y = { id: i, x: 400 + 200 * Math.cos((2 * Math.PI * i) / (Math.pow(2, bits+1))),
+      y: 250 + 200 * Math.sin((2 * Math.PI * i) /Math.pow(2, bits+1)), }
+      x['nodes'].push(y)
+      y = { source: i, target: ((i + 1) % (Math.pow(2, bits))) }
+      x['links'].push(y);
+    }
+    setGraph(x)
+    console.log(x)
+    console.log(graph)
+  }
   const succ = (arr, element) => {
     var sol = arr[0];
     for (var i = 0; i < arr.length; i++) {
@@ -20,7 +81,7 @@ function App() {
     }
     return sol
   }
-  
+
   const calculateFingerTable = (arr) => {
     var obj = {}
     var max = Math.pow(2, bits) - 1
@@ -34,7 +95,7 @@ function App() {
     }
     setFT(obj)
   }
-  
+
   const calcNodes = () => {
     if (numNodes > (Math.pow(2, bits))) {
       alert('Too many nodes')
@@ -49,15 +110,16 @@ function App() {
     arr.sort(function (a, b) { return a - b })
     setNodes(arr)
     calculateFingerTable(arr)
+    createGraph()
   }
 
   const startSearch = () => {
     var max = Math.pow(2, bits) - 1;
-    if(key>max){
+    if (key > max) {
       alert('Key entered cannot exist')
       return;
     }
-    if(!ft[init]){
+    if (!ft[init]) {
       alert("Please enter an active node");
       return
     }
@@ -142,6 +204,11 @@ function App() {
       }
     }
     setResultArr(tempArr)
+    // var x = graph['links']
+    // for(i=0;i<tempArr.length-1;i++){
+    //   x.push({target :tempArr[i], source:tempArr[i+1] })
+    // }
+    // setGraph(...graph,graph['links']=x)
   }
 
   const addNode = () => {
@@ -169,7 +236,7 @@ function App() {
 
   return (
     <div className="App">
-    <h2>Simulation of DHT System Using Chord Algorithm</h2>
+      <h2>Simulation of DHT System Using Chord Algorithm</h2>
       <div className='container1'>
         <div>
           <label>Enter no. of bits in address space(m):</label>
@@ -194,7 +261,7 @@ function App() {
               {
                 nodes.map((item, index) => (
                   <div key={index}>
-                  {item}: [
+                    {item}: [
                     {ft[item].map((key, index) => (
                       <span key={index}> {key} </span>
                     ))}
@@ -230,6 +297,14 @@ function App() {
 
           </>
         }
+      </div>
+      <div style={{height:"1000px"}}>
+        {graph && <Graph
+          id="graph-id" // id is mandatory
+          data={graph}
+          config={Myconfig}
+          simulationOptions={simulationConfig}
+        />}
       </div>
     </div>
   );
