@@ -55,7 +55,13 @@ function App() {
 
     var n = init;
     while(n<key){
+      var flag = 0
       var ftArr=ft[n];
+      if(n===Math.max.apply(null, nodes) && key>n){
+        n=ftArr[0];
+        tempArr.push(n);
+        break;
+      }
 
       if(ftArr[0]>key){
         n=ftArr[0];
@@ -63,19 +69,21 @@ function App() {
         break;
       }
 
-      if(ftArr[ftArr.length-1]<key){
+      for(var i=0; i<ftArr.length-1; i++){
+        if((ftArr[i]<key && ftArr[i+1]>key) || (ftArr[i]>ftArr[i+1])){
+          n=ftArr[i]
+          tempArr.push(n)
+          flag=1
+          break;
+        }
+      }
+
+      if(ftArr[ftArr.length-1]<key && flag===0){
         n=ftArr[ftArr.length-1]
         tempArr.push(n)
         continue;
       }
 
-      for(var i=0; i<ftArr.length-1; i++){
-        if(ftArr[i]<key && ftArr[i+1]>key){
-          n=ftArr[i]
-          tempArr.push(n)
-          break;
-        }
-      }
 
     }
     console.log(tempArr)
