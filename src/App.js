@@ -91,14 +91,27 @@ function App() {
   else{
     while(n>key){
       var ftArr=ft[n];
+      var flag1 = 0
+
+      if(key<Math.min.apply(null, nodes) && ftArr.includes(Math.min.apply(null, nodes))){
+        tempArr.push(Math.min.apply(null, nodes))
+        break;
+      }
+
       for(var i=0; i<ftArr.length; i++){
         if(ftArr[i]<=key){
           n=ftArr[i]
           tempArr.push(n)
-          flag=1
+          flag1=1
           break;
         }
       }
+
+      if(flag1===0){
+        n = Math.max.apply(null, ftArr)
+        tempArr.push(n)
+      }
+
     }
     while(n<key){
       var flag = 0
