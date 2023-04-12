@@ -91,7 +91,7 @@ function App() {
   else{
     while(n>key){
       var ftArr=ft[n];
-      for(var i=0; i<ftArr.length-1; i++){
+      for(var i=0; i<ftArr.length; i++){
         if(ftArr[i]<=key){
           n=ftArr[i]
           tempArr.push(n)
