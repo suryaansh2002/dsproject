@@ -76,11 +76,20 @@ function App() {
         console.log('here',n)
         tempArr.push(ftArr[0]);
         console.log(tempArr)
+      var flag = 0
+      if(n===Math.max.apply(null, nodes) && key>n){
+        n=ftArr[0];
+        tempArr.push(n);
         break;
       }
-      var flag=0;
+
+      if(ftArr[0]>key){
+        n=ftArr[0];
+        tempArr.push(n);
+        break;
+      }
       for(var i=0; i<ftArr.length-1; i++){
-        if(ftArr[i]<key && ftArr[i+1]>key){
+        if((ftArr[i]<key && ftArr[i+1]>key) || (ftArr[i]>ftArr[i+1])){
           n=ftArr[i]
           tempArr.push(n)
           console.log(tempArr)
@@ -95,6 +104,18 @@ function App() {
       //   console.log(tempArr)
       //   continue;
       // }
+          flag=1
+          break;
+        }
+      }
+
+      if(ftArr[ftArr.length-1]<key && flag===0){
+        n=ftArr[ftArr.length-1]
+        tempArr.push(n)
+        continue;
+      }
+
+
     }
     console.log(tempArr)
     setResultArr(tempArr)
