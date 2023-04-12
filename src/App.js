@@ -45,7 +45,6 @@ function App() {
       if (arr.indexOf(r) === -1) arr.push(r);
     }
     arr.sort(function (a, b) { return a - b })
-    arr=[12,16,17,24,27]
     setNodes(arr)
     calculateFingerTable(arr)
   }
@@ -55,28 +54,10 @@ function App() {
     tempArr.push(init)
 
     var n = init;
-    var successor;
-    console.log(nodes)
-    for(var i=0; i<nodes.length-1; i++){
-      if(key>nodes[i] && key<nodes[i+1]){
-        successor=nodes[i+1];
-        break;
-      }
-    }
-    console.log(successor)
-    while(n!=successor){
-      var ftArr=ft[n];
-      if(n>key && tempArr.length>1 && ftArr[0]>key){
-        console.log('here',n)
-        tempArr.push(ftArr[0]);
-        console.log(tempArr)
-        break;
-      }
-      if(n<key && tempArr.length>0 && ftArr[0]>key){
-        console.log('here',n)
-        tempArr.push(ftArr[0]);
-        console.log(tempArr)
+    if(n<key){
+    while(n<key){
       var flag = 0
+      var ftArr=ft[n];
       if(n===Math.max.apply(null, nodes) && key>n){
         n=ftArr[0];
         tempArr.push(n);
@@ -88,22 +69,11 @@ function App() {
         tempArr.push(n);
         break;
       }
+
       for(var i=0; i<ftArr.length-1; i++){
         if((ftArr[i]<key && ftArr[i+1]>key) || (ftArr[i]>ftArr[i+1])){
           n=ftArr[i]
           tempArr.push(n)
-          console.log(tempArr)
-          flag=1;
-          break;
-        }
-      }
-      
-      // if(ftArr[ftArr.length-1]<key && flag==1){
-      //   n=ftArr[ftArr.length-1]
-      //   tempArr.push(n)
-      //   console.log(tempArr)
-      //   continue;
-      // }
           flag=1
           break;
         }
@@ -117,6 +87,50 @@ function App() {
 
 
     }
+  }
+  else{
+    while(n>key){
+      var ftArr=ft[n];
+      for(var i=0; i<ftArr.length-1; i++){
+        if(ftArr[i]<=key){
+          n=ftArr[i]
+          tempArr.push(n)
+          flag=1
+          break;
+        }
+      }
+    }
+    while(n<key){
+      var flag = 0
+      var ftArr=ft[n];
+      if(n===Math.max.apply(null, nodes) && key>n){
+        n=ftArr[0];
+        tempArr.push(n);
+        break;
+      }
+
+      if(ftArr[0]>key){
+        n=ftArr[0];
+        tempArr.push(n);
+        break;
+      }
+
+      for(var i=0; i<ftArr.length-1; i++){
+        if((ftArr[i]<key && ftArr[i+1]>key) || (ftArr[i]>ftArr[i+1])){
+          n=ftArr[i]
+          tempArr.push(n)
+          flag=1
+          break;
+        }
+      }
+
+      if(ftArr[ftArr.length-1]<key && flag===0){
+        n=ftArr[ftArr.length-1]
+        tempArr.push(n)
+        continue;
+      }
+    }
+  }
     console.log(tempArr)
     setResultArr(tempArr)
   }
