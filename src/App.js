@@ -1,7 +1,5 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import { Graph } from 'react-d3-graph';
-
 function App() {
   const [bits, setBits] = useState(0)
   const [numNodes, setNumNodes] = useState(0)
@@ -11,66 +9,8 @@ function App() {
   const [key, setKey] = useState()
   const [init, setInit] = useState()
   const [resultArr, setResultArr] = useState([])
-  const [graph, setGraph] = useState({})
+  const [allNodes, setAllNodes] = useState([])
 
-  useEffect((effect) => {
-    console.log(graph)
-  }, [graph])
-
-  const Myconfig = {
-    node: {
-      color: 'white',
-      size: 200,
-      fontSize: 16,
-      labelProperty: 'label',
-      fontColor : "white"
-    },
-    link: {
-      color: 'white',
-      strokeWidth: 2,
-    },
-    height: 500,
-    width: 800,
-    d3: {
-      alphaTarget: 0.05,
-      gravity: -100,
-    },
-    layout: {
-      type: 'd3Force',
-      alphaTarget: 0.05,
-      gravity: -100,
-    },
-  }
-
-  const simulationConfig = {
-    alpha: 0.5,
-    alphaMin: 0.01,
-    alphaDecay: 0.05,
-    velocityDecay: 0.3,
-    force: {
-      name: 'circle',
-      radius: 200,
-      strength: 1,
-      x: 400,
-      y: 250,
-    },
-  };
-
-  const createGraph = async () => {
-    var x = {}
-    x['nodes'] = []
-    x['links'] = []
-    for (var i = 0; i < Math.pow(2, bits); i++) {
-      var y = { id: i, x: 400 + 200 * Math.cos((2 * Math.PI * i) / (Math.pow(2, bits+1))),
-      y: 250 + 200 * Math.sin((2 * Math.PI * i) /Math.pow(2, bits+1)), }
-      x['nodes'].push(y)
-      y = { source: i, target: ((i + 1) % (Math.pow(2, bits))) }
-      x['links'].push(y);
-    }
-    setGraph(x)
-    console.log(x)
-    console.log(graph)
-  }
   const succ = (arr, element) => {
     var sol = arr[0];
     for (var i = 0; i < arr.length; i++) {
@@ -95,22 +35,46 @@ function App() {
     }
     setFT(obj)
   }
-
+  const showCircle = () => {
+    var angle = 360 / allNodes.length
+    var rotate = 0;
+    for (var i = 1; i < allNodes.length + 1; i++) {
+      var l = document.querySelector(`#circle :nth-child(${i})`);
+      l.style.transform = `rotate(${rotate * 1}deg) translateX(${40 / 2}vw) rotate(${rotate * -1}deg)`
+      rotate = rotate + angle
+    }
+    console.log(nodes)
+  }
   const calcNodes = () => {
+    var max = Math.pow(2, bits) - 1
+    var tempArr = []
+    for (var i = 0; i <= max; i++) {
+      tempArr.push(i)
+    }
+    setAllNodes(tempArr)
     if (numNodes > (Math.pow(2, bits))) {
       alert('Too many nodes')
       return
     }
     var arr = [];
-    var max = Math.pow(2, bits) - 1
     while (arr.length < numNodes) {
       var r = Math.floor(Math.random() * max) + 1;
       if (arr.indexOf(r) === -1) arr.push(r);
     }
     arr.sort(function (a, b) { return a - b })
+    for (var i = 1; i < allNodes.length + 1; i++) {
+      var l = document.querySelector(`#circle :nth-child(${i})`);
+      if(arr.includes(i-1)){
+        l.style.backgroundColor='red'
+      }
+      else{
+        l.style.backgroundColor='white'
+      }
+    }
     setNodes(arr)
+    showCircle();
+
     calculateFingerTable(arr)
-    createGraph()
   }
 
   const startSearch = () => {
@@ -224,6 +188,7 @@ function App() {
     }
     arr.sort(function (a, b) { return a - b })
     setNodes(arr)
+    showCircle();
     calculateFingerTable(arr)
   }
 
@@ -231,6 +196,7 @@ function App() {
     var arr = nodes;
     arr.splice(Math.floor(Math.random() * arr.length), 1);
     setNodes(arr);
+    showCircle();
     calculateFingerTable(arr);
   }
 
@@ -298,14 +264,12 @@ function App() {
           </>
         }
       </div>
-      <div style={{height:"1000px"}}>
-        {graph && <Graph
-          id="graph-id" // id is mandatory
-          data={graph}
-          config={Myconfig}
-          simulationOptions={simulationConfig}
-        />}
-      </div>
+      <ul id='circle'>
+        {allNodes.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+
     </div>
   );
 }
