@@ -167,6 +167,12 @@ function App() {
         }
       }
     }
+    var s=''
+    tempArr.map((item)=>{
+      s+=String(item)+' -> '
+    })
+    s=s.slice(0,-3)
+    document.getElementById('path').innerHTML=s
     setResultArr(tempArr)
     // var x = graph['links']
     // for(i=0;i<tempArr.length-1;i++){
@@ -187,16 +193,32 @@ function App() {
       }
     }
     arr.sort(function (a, b) { return a - b })
+    for (var i = 1; i < allNodes.length + 1; i++) {
+      var l = document.querySelector(`#circle :nth-child(${i})`);
+      if(arr.includes(i-1)){
+        l.style.backgroundColor='red'
+      }
+      else{
+        l.style.backgroundColor='white'
+      }
+    }
     setNodes(arr)
-    showCircle();
     calculateFingerTable(arr)
   }
 
   const removeNode = () => {
     var arr = nodes;
     arr.splice(Math.floor(Math.random() * arr.length), 1);
+    for (var i = 1; i < allNodes.length + 1; i++) {
+      var l = document.querySelector(`#circle :nth-child(${i})`);
+      if(arr.includes(i-1)){
+        l.style.backgroundColor='red'
+      }
+      else{
+        l.style.backgroundColor='white'
+      }
+    }
     setNodes(arr);
-    showCircle();
     calculateFingerTable(arr);
   }
 
@@ -257,7 +279,7 @@ function App() {
               <div className='container1'>
                 <div>Key: <b>{key}</b> found with node: <b>{resultArr[resultArr.length - 1]}</b></div>
                 <div>Path Followed:</div>
-                <div>{resultArr.map((item, index) => <span key={index}>{item} </span>)}</div>
+                <div id="path"></div>
               </div>
             </>}
 
