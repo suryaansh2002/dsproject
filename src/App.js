@@ -11,6 +11,7 @@ function App() {
   const [resultArr, setResultArr] = useState([]);
   const [allNodes, setAllNodes] = useState([]);
   const [path, setPath] = useState("");
+
   const succ = (arr, element) => {
     var sol = arr[0];
     for (var i = 0; i < arr.length; i++) {
@@ -49,6 +50,8 @@ function App() {
     }
     console.log(nodes);
   };
+
+  // randomly select active nodes. create the circle and finger table
   const calcNodes = () => {
     var max = Math.pow(2, bits) - 1;
     var tempArr = [];
@@ -99,21 +102,26 @@ function App() {
     var tempArr = [];
     tempArr.push(init);
     var n = init;
+    // if we are searching a higher node from a lower node
     if (n < key) {
+      // while we do not reach the desired node
       while (n < key) {
         var flag = 0;
         var ftArr = ft[n];
+        // if we are at the largest active node and the key is greater than the largest active node, then the final destination will be the smallest active node
         if (n === Math.max.apply(null, nodes) && key > n) {
           n = ftArr[0];
           tempArr.push(n);
           break;
         }
+        // for this breaking condition -> q = FTp[0] when p < k < FTp[0]
         if (ftArr[0] > key) {
           n = ftArr[0];
           tempArr.push(n);
           break;
         }
         for (var i = 0; i < ftArr.length - 1; i++) {
+          // if we find the key to be between two ascending pair of values or we find a descending pair of values, go to the lower value
           if (
             (ftArr[i] < key && ftArr[i + 1] > key) ||
             ftArr[i] > ftArr[i + 1]
@@ -124,16 +132,20 @@ function App() {
             break;
           }
         }
+        // if we did not find a node in the previous if condition (implies that the elements of the finger table are ascending) and the key is greater than every value in the finger table, go to the largest value in the finger table
         if (ftArr[ftArr.length - 1] < key && flag === 0) {
           n = ftArr[ftArr.length - 1];
           tempArr.push(n);
           continue;
         }
       }
-    } else {
+    } 
+    // if we are searching a lower node from a higher node
+    else {
       while (n > key) {
         ftArr = ft[n];
         var flag1 = 0;
+        // if the key is less than the minimum active node and the current node's finger table has that minimum node, then that minimum node is the final destination
         if (
           key < Math.min.apply(null, nodes) &&
           ftArr.includes(Math.min.apply(null, nodes))
@@ -142,6 +154,7 @@ function App() {
           break;
         }
         for (i = 0; i < ftArr.length; i++) {
+          // if we find a node such that the key is larger than it we go to that node
           if (ftArr[i] <= key) {
             n = ftArr[i];
             tempArr.push(n);
@@ -149,11 +162,13 @@ function App() {
             break;
           }
         }
+        // if the key is smaller than every node in the finger table, then go to the maximum node in the finger table
         if (flag1 === 0) {
           n = Math.max.apply(null, ftArr);
           tempArr.push(n);
         }
       }
+      // now that we are again searching from lower to higher node use the previous while loop
       while (n < key) {
         ftArr = ft[n];
         if (n === Math.max.apply(null, nodes) && key > n) {
@@ -191,11 +206,7 @@ function App() {
     s = s.slice(0, -3);
     setPath(s);
     setResultArr(tempArr);
-    // var x = graph['links']
-    // for(i=0;i<tempArr.length-1;i++){
-    //   x.push({target :tempArr[i], source:tempArr[i+1] })
-    // }
-    // setGraph(...graph,graph['links']=x)
+
   };
 
   const addNode = () => {
