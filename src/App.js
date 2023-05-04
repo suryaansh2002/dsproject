@@ -38,10 +38,12 @@ function App() {
   const showCircle = () => {
     var angle = 360 / allNodes.length;
     var rotate = 0;
+    var cir = document.querySelector(`#circle`);
+    cir.style.marginTop = `${bits * 2}vw`;
     for (var i = 1; i < allNodes.length + 1; i++) {
       var l = document.querySelector(`#circle :nth-child(${i})`);
       l.style.transform = `rotate(${rotate * 1}deg) translateX(${
-        40 / 2
+        bits * 4.5
       }vw) rotate(${rotate * -1}deg)`;
       rotate = rotate + angle;
     }
@@ -66,6 +68,10 @@ function App() {
     arr.sort(function (a, b) {
       return a - b;
     });
+    var circle = document.querySelector("#circle");
+    circle.style.width = `${bits * 10}vw`;
+    circle.style.height = `${bits * 10}vw`;
+    console.log(circle.style.height);
     for (var i = 1; i < allNodes.length + 1; i++) {
       var l = document.querySelector(`#circle :nth-child(${i})`);
       if (arr.includes(i - 1)) {
@@ -242,7 +248,6 @@ function App() {
           <input
             className="containerInput"
             type="number"
-            disabled={bool1}
             onChange={(e) => setBits(Number(e.target.value))}
           />
           <button onClick={() => setBool1(true)}>Submit</button>
